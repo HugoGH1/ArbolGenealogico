@@ -1,6 +1,7 @@
 import os
 import sys
-
+import matplotlib.pyplot as plt
+from matplotlib.patches import FancyArrowPatch
 
 class Nodo:
     def __init__(self, nombre):
@@ -53,6 +54,21 @@ def mostrar_arbol(nodo, nivel=0):
         mostrar_arbol(nodo.izquierdo, nivel + 1)
     if nodo.derecho is not None:
         mostrar_arbol(nodo.derecho, nivel + 1)
+            
+
+def mostrar_arbol2(nodo, ax, x=0, y=0, nivel=0, nivel_height=0.1):
+    if nodo is not None:
+        dx = 1.0 / 2**(nivel + 1)
+        dy = nivel_height
+        ax.text(x, y, nodo.nombre, ha='center', va='center', bbox=dict(facecolor='white', edgecolor='black'))
+        
+        if nodo.izquierdo is not None:
+            mostrar_arbol2(nodo.izquierdo, ax, x - dx, y - dy, nivel + 1, nivel_height)
+            ax.add_patch(FancyArrowPatch((x, y), (x - dx, y - dy), color='black', arrowstyle='->', mutation_scale=15))
+        
+        if nodo.derecho is not None:
+            mostrar_arbol2(nodo.derecho, ax, x + dx, y - dy, nivel + 1, nivel_height)
+            ax.add_patch(FancyArrowPatch((x, y), (x + dx, y - dy), color='black', arrowstyle='->', mutation_scale=15))
 
 def mostrar_arbol_preorden(nodo):
     if nodo is not None:
@@ -222,7 +238,9 @@ if raiz.nombre is not None :
     os.system('clear')
     print("\nArbol genealógico:")
     #mostrar_arbol(raiz)
+
     resumen_niveles = mostrar_arbol(raiz)
+   
 
     print()
     # Mostrar los recorridos
@@ -235,6 +253,7 @@ if raiz.nombre is not None :
         print("4. Buscar en el árbol")
         print("5. Salir del programa")
         print("6. Ver información del árbol")
+        print("7. Mostrar árbol")
         opcion = int(input("Opción: "))
         if opcion == 1:
             print("Recorrido en pre-orden:")
@@ -265,6 +284,13 @@ if raiz.nombre is not None :
             print(f"Grado del árbol: 2")
             print(f"Altura del árbol: {len(niveles)}")
             print(f"Peso del árbol: {obtener_contador_nodos()}")
+        elif opcion == 7:
+            print("Mostrar árbol")
+            fig, ax = plt.subplots(figsize=(12, 12))
+            mostrar_arbol2(raiz, ax)
+            ax.set_aspect('equal')
+            ax.axis('off')
+            plt.show()
         else:
             print("Opción inválida. Intente de nuevo.")
 
